@@ -10,7 +10,7 @@ ghcr.io/yusoofsh/caddy:latest
 
 The GitHub Actions workflow builds on `ubuntu-latest` and publishes to GitHub Container Registry on every push to `main`.
 
-It also runs weekly from GitHub Actions schedule so `latest` is rebuilt against current Caddy base images and current unpinned module resolutions even when repository files do not change. Use `workflow_dispatch` for an immediate rebuild when needed.
+Use `workflow_dispatch` to manually rebuild `latest` against current Caddy base images and current unpinned module resolutions when needed.
 
 Published images include BuildKit provenance and SBOM attestations.
 
