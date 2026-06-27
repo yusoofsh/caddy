@@ -1,0 +1,27 @@
+# Keep runtime secrets and local state out of the Docker build context.
+.env
+.env.*
+*.env
+
+# Runtime config is mounted by the lighthouse compose stack.
+compose.yaml
+compose.yml
+docker-compose.yml
+caddyfile
+Caddyfile
+
+# Local/editor/system noise.
+.git
+.github
+.gitignore
+*.log
+*.bak
+*.tmp
+.DS_Store
+
+# Build outputs and archives.
+dist
+build
+*.tar
+*.tar.gz
+*.zip
