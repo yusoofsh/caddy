@@ -10,7 +10,6 @@ RUN go version && GOMAXPROCS=2 GOMEMLIMIT=1600MiB xcaddy build v2.11.4 \
   --with github.com/lucaslorentz/caddy-docker-proxy/v2@v2.13.1 \
   --with github.com/hslatman/caddy-crowdsec-bouncer/http@v0.14.1 \
   --with github.com/hslatman/caddy-crowdsec-bouncer/appsec@v0.14.1 \
-  --replace github.com/google/cel-go=github.com/google/cel-go@v0.29.0 \
   --replace go.mongodb.org/mongo-driver=go.mongodb.org/mongo-driver@v1.17.7 \
   --replace go.opentelemetry.io/otel/exporters/otlp/otlptrace=go.opentelemetry.io/otel/exporters/otlp/otlptrace@v1.45.0 \
   --replace go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc=go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc@v1.45.0 \
