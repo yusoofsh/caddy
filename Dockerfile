@@ -10,9 +10,9 @@ RUN go version && GOMAXPROCS=2 GOMEMLIMIT=1600MiB xcaddy build v2.11.4 \
   --with github.com/lucaslorentz/caddy-docker-proxy/v2@v2.13.1 \
   --with github.com/hslatman/caddy-crowdsec-bouncer/http@v0.14.1 \
   --with github.com/hslatman/caddy-crowdsec-bouncer/appsec@v0.14.1 \
-  --replace golang.org/x/net=golang.org/x/net@v0.56.0 \
+  --replace golang.org/x/net=golang.org/x/net@v0.58.0 \
   --replace golang.org/x/crypto=golang.org/x/crypto@v0.55.0 \
-  --replace golang.org/x/text=golang.org/x/text@v0.39.0 \
+  --replace golang.org/x/text=golang.org/x/text@v0.41.0 \
   --replace google.golang.org/grpc=google.golang.org/grpc@v1.83.2 \
   --replace github.com/crowdsecurity/crowdsec=github.com/crowdsecurity/crowdsec@v1.7.8
 
