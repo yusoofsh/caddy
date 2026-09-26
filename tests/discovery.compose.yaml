@@ -1,0 +1,60 @@
+services:
+  controller:
+    image: ${TEST_CADDY_IMAGE:?required}
+    user: "65532:65532"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    entrypoint: [caddy]
+    command: [docker-proxy, --event-throttle-interval, 1s]
+    environment:
+      DOCKER_HOST: tcp://socket:2375
+      CADDY_DOCKER_MODE: controller
+      CADDY_CONTROLLER_NETWORK: 172.30.249.0/29
+      CADDY_DOCKER_LABEL_PREFIX: caddy_security_test
+      CADDY_INGRESS_NETWORKS: lh-caddy-test_control
+    networks:
+      socket: {}
+      control:
+        ipv4_address: 172.30.249.2
+    tmpfs:
+      - /config:rw,noexec,nosuid,nodev,mode=0700,uid=65532,gid=65532
+      - /tmp:rw,noexec,nosuid,nodev,mode=1777
+    mem_limit: 128m
+    pids_limit: 128
+
+  server:
+    image: ${TEST_CADDY_IMAGE:?required}
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    entrypoint: [caddy]
+    command: [docker-proxy]
+    environment:
+      CADDY_DOCKER_MODE: server
+      CADDY_CONTROLLER_NETWORK: 172.30.249.0/29
+    labels:
+      caddy_security_test_controlled_server: "true"
+      caddy_security_test: ":8080"
+      caddy_security_test.respond: '"discovery-ready" 200'
+    ports:
+      - "127.0.0.1:18089:8080"
+    networks:
+      control:
+        ipv4_address: 172.30.249.3
+    tmpfs:
+      - /config:rw,noexec,nosuid,nodev,mode=0700
+      - /data:rw,noexec,nosuid,nodev,mode=0700
+      - /tmp:rw,noexec,nosuid,nodev,mode=1777
+    mem_limit: 128m
+    pids_limit: 128
+
+networks:
+  socket:
+    external: true
+    name: socket
+  control:
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.30.249.0/29
