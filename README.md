@@ -10,7 +10,7 @@ ghcr.io/yusoofsh/caddy:latest
 
 The GitHub Actions workflow builds on `ubuntu-latest` and publishes to GitHub Container Registry on every push to `main`.
 
-Use `workflow_dispatch` to manually rebuild `latest` against current Caddy base images and current unpinned module resolutions when needed.
+Use `workflow_dispatch` on a reviewed branch to publish a commit-specific candidate without moving `latest`. Deploy the candidate by registry digest after validation; `latest` is only published from `main`.
 
 Published images include BuildKit provenance and SBOM attestations.
 
@@ -22,7 +22,13 @@ Published images include BuildKit provenance and SBOM attestations.
 - `github.com/hslatman/caddy-crowdsec-bouncer/http`
 - `github.com/hslatman/caddy-crowdsec-bouncer/appsec`
 
-Module versions are intentionally not pinned in `Dockerfile`; the build resolves current versions at image build time.
+Base image digests, Caddy, Go, and plugin versions are pinned in `Dockerfile`. The Go toolchain is explicitly copied from the pinned Go image rather than inherited from an older Caddy builder. The `x/net` replacement carries the DNS parser security fix. Review and rebuild these pins regularly; pinning is not a substitute for updates.
+
+## Discovery isolation
+
+The image supports `CADDY_DOCKER_MODE=controller` and `server`. Only the private controller should reach the Docker socket proxy. The public server must not join the socket network or mount a Docker socket. Preserve the server's `/data` volume for certificates.
+
+The upstream controller uses the server's private HTTP admin listener; it does not provide mutual TLS. Isolate its control network, bind the listener only there, restrict traffic to controller-to-server configuration pushes, and verify no reverse path to the Docker API. The controller's admin API is disabled by upstream in controller-only mode. Never publish the control listener on the host.
 
 ## Rollback
 

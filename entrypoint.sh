@@ -5,6 +5,11 @@ MAX_WAIT=60
 INTERVAL=2
 ELAPSED=0
 
+# The discovery-only controller has no application routes or need for LAPI.
+if [ "${CADDY_DOCKER_MODE:-standalone}" = "controller" ]; then
+  exec caddy docker-proxy --event-throttle-interval 3s
+fi
+
 echo "Waiting for CrowdSec LAPI on :8080..."
 while ! nc -z 172.19.0.1 8080 2>/dev/null; do
   if [ "$ELAPSED" -ge "$MAX_WAIT" ]; then
