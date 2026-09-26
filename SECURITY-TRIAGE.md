@@ -25,13 +25,14 @@ arrives. Review by 2026-10-26 or whenever either component changes.
 
 ## Other candidate findings
 
-The Caddy builder now carries these coordinated, source-compatible replacements:
+The Caddy builder carries these proposed replacements; the image build and
+runtime checks, not static inspection, establish compatibility:
 
 | Reported module | Reported | Build pin | Reachability / compatibility |
 | --- | ---: | ---: | --- |
 | `github.com/google/cel-go` | 0.28.1 | 0.29.0 | Caddy directly uses CEL matchers. The update retains the imported CEL packages; the Caddy source already handles newer native-value map shapes. |
 | `go.mongodb.org/mongo-driver` | 1.17.0 | 1.17.7 | Transitive through the CrowdSec bouncer; this is the compatible 1.17 patch line and no Caddy source API is changed. |
-| `go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc` | 0.19.0 | 0.21.0 | Indirect telemetry exporter. The matching HTTP exporter is updated as well so the OTel log graph resolves coherently. |
+| `go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc` | 0.19.0 | retained | Forcing 0.21.0 breaks the current stdout log exporter's Value API at compile time. Keep the medium finding visible; do not enable OTLP log exporting before a compatible coordinated upgrade. |
 | `go.opentelemetry.io/otel/exporters/otlp/otlptrace*` | 1.43.0 | 1.45.0 | Caddy's tracing integration uses stable OTel APIs; the trace, gRPC, and HTTP exporter modules are updated together. |
 | `go.opentelemetry.io/otel/sdk` | 1.44.0 | 1.45.0 | Coordinated with the OTel root/metric/trace modules selected by the exporter graph. |
 | `golang.org/x/crypto` | 0.55.0 | 0.56.0 | Fixes the reported SSH denial-of-service advisories; the builder is pinned to Go 1.26.8, which satisfies this module's Go 1.26 requirement. |
@@ -43,10 +44,9 @@ packages, but do not import `openpgp`; no source rewrite or blanket scanner
 exception is warranted. Revisit if a dependency begins importing OpenPGP or if
 the upstream module provides a supported replacement.
 
-The Go toolchain, x/net, x/crypto, x/text, gRPC, CEL, MongoDB, and OTel
-dependencies are explicitly patched in the Dockerfile. Re-scan the final image
-digest after each change. The existing report is for the pre-rebuild image
-`sha256:168b85b3c0a3696fb6adae74d98c2e1980e9e746796dd5c5fab27d1d0f1e2f23`;
-it is not evidence for the rebuilt candidate. Release requires the pinned
+The Go toolchain, x/net, x/crypto, x/text, gRPC, CEL, MongoDB, and stable OTel
+trace/SDK dependencies are explicitly patched in the Dockerfile. Re-scan the
+final image digest after each change; a prior report is not evidence for a
+rebuilt candidate. Release requires the pinned
 workflow build to succeed, `go version -m /usr/bin/caddy` to show the expected
 module versions, and a fresh final-image scan.

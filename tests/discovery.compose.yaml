@@ -36,7 +36,7 @@ services:
     labels:
       caddy_security_test_controlled_server: "true"
       caddy_security_test: ":8080"
-      caddy_security_test.respond: '"discovery-ready" 200'
+      caddy_security_test.respond: '"${TEST_RESPONSE:-discovery-ready}" 200'
     ports:
       - "127.0.0.1:18089:8080"
     networks:
