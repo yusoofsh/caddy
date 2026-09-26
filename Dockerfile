@@ -1,8 +1,8 @@
 FROM golang:1.26.8-alpine@sha256:8ac98ca534ac3f51e1f420a1dd2c15e74c75cfa0f23f3ad27eb5d7236c349a0c AS toolchain
 FROM caddy:2.11.4-builder-alpine@sha256:0aa610043dab5da82ad0a0268e46bb852785e6f5160f12f1c6fe3f42903d7e1b AS builder
 
-COPY --from=toolchain /usr/local/go /usr/local/go
-ENV GOTOOLCHAIN=local
+COPY --from=toolchain /usr/local/go /opt/go
+ENV PATH="/opt/go/bin:${PATH}" GOROOT=/opt/go GOTOOLCHAIN=local
 
 RUN go version && GOMAXPROCS=2 GOMEMLIMIT=1600MiB xcaddy build v2.11.4 \
   --with github.com/caddy-dns/cloudflare@v0.2.4 \
