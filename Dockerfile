@@ -10,8 +10,16 @@ RUN go version && GOMAXPROCS=2 GOMEMLIMIT=1600MiB xcaddy build v2.11.4 \
   --with github.com/lucaslorentz/caddy-docker-proxy/v2@v2.13.1 \
   --with github.com/hslatman/caddy-crowdsec-bouncer/http@v0.14.1 \
   --with github.com/hslatman/caddy-crowdsec-bouncer/appsec@v0.14.1 \
+  --replace github.com/google/cel-go=github.com/google/cel-go@v0.29.0 \
+  --replace go.mongodb.org/mongo-driver=go.mongodb.org/mongo-driver@v1.17.7 \
+  --replace go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc=go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc@v0.21.0 \
+  --replace go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp=go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp@v0.21.0 \
+  --replace go.opentelemetry.io/otel/exporters/otlp/otlptrace=go.opentelemetry.io/otel/exporters/otlp/otlptrace@v1.45.0 \
+  --replace go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc=go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc@v1.45.0 \
+  --replace go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp=go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp@v1.45.0 \
+  --replace go.opentelemetry.io/otel/sdk=go.opentelemetry.io/otel/sdk@v1.45.0 \
   --replace golang.org/x/net=golang.org/x/net@v0.58.0 \
-  --replace golang.org/x/crypto=golang.org/x/crypto@v0.55.0 \
+  --replace golang.org/x/crypto=golang.org/x/crypto@v0.56.0 \
   --replace golang.org/x/text=golang.org/x/text@v0.41.0 \
   --replace google.golang.org/grpc=google.golang.org/grpc@v1.83.2
 
