@@ -1,0 +1,135 @@
+services:
+  socket:
+    image: ${SOCKET_PROXY_IMAGE:?set a tested registry digest}
+    restart: unless-stopped
+    networks:
+      - socket
+    environment:
+      CONTAINERS: "1"
+      NETWORKS: "1"
+      SERVICES: "1"
+      TASKS: "1"
+      INFO: "1"
+      POST: "0"
+      LOG_LEVEL: warning
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    mem_limit: 64m
+    memswap_limit: 96m
+    pids_limit: 64
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: [CMD, wget, -q, --spider, "http://localhost:2375/_ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  controller:
+    image: ${CADDY_IMAGE:?set a tested registry digest}
+    restart: unless-stopped
+    user: "65532:65532"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      socket: {}
+      control:
+        ipv4_address: 172.30.250.2
+    depends_on:
+      socket:
+        condition: service_healthy
+    environment:
+      DOCKER_HOST: tcp://socket:2375
+      CADDY_DOCKER_MODE: controller
+      CADDY_CONTROLLER_NETWORK: 172.30.250.0/29
+      CADDY_DOCKER_CADDYFILE_PATH: /etc/caddy/Caddyfile
+      CADDY_INGRESS_NETWORKS: caddy
+      CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN:?required}
+      CROWDSEC_API_KEY: ${CROWDSEC_API_KEY:?required}
+      EMAIL: ${EMAIL:-}
+    volumes:
+      - ./caddyfile:/etc/caddy/Caddyfile:ro
+    tmpfs:
+      - /config:rw,noexec,nosuid,nodev,mode=0700,uid=65532,gid=65532
+      - /tmp:rw,noexec,nosuid,nodev,mode=1777
+    mem_limit: 192m
+    memswap_limit: 256m
+    pids_limit: 128
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+
+  ingress:
+    image: ${CADDY_IMAGE:?set a tested registry digest}
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    cap_add: [NET_BIND_SERVICE]
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      caddy:
+        ipv4_address: 172.19.0.3
+      control:
+        ipv4_address: 172.30.250.3
+    labels:
+      caddy_controlled_server: "true"
+    ports:
+      - "80:80"
+      - "443:443/tcp"
+      - "443:443/udp"
+    environment:
+      CADDY_DOCKER_MODE: server
+      CADDY_CONTROLLER_NETWORK: 172.30.250.0/29
+      # Caddy's {env.*} placeholders are resolved by the serving process.
+      CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN:?required}
+      CROWDSEC_API_KEY: ${CROWDSEC_API_KEY:?required}
+    volumes:
+      - data:/data
+    tmpfs:
+      - /config:rw,noexec,nosuid,nodev,mode=0700
+      - /tmp:rw,noexec,nosuid,nodev,mode=1777
+    mem_limit: 256m
+    memswap_limit: 320m
+    pids_limit: 128
+    healthcheck:
+      test: [CMD, wget, -q, --spider, "http://172.30.250.3:2019/config/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+
+volumes:
+  data: {}
+
+networks:
+  caddy:
+    name: caddy
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.19.0.0/16
+          gateway: 172.19.0.1
+  socket:
+    name: socket
+    driver: bridge
+    internal: true
+  control:
+    name: lighthouse-caddy-control
+    driver: bridge
+    internal: true
+    driver_opts:
+      com.docker.network.bridge.name: br-lh-caddy-ctl
+    ipam:
+      config:
+        - subnet: 172.30.250.0/29

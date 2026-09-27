@@ -1,0 +1,17 @@
+{
+	acme_dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+	servers {
+		trusted_proxies cloudflare {
+			interval 12h
+			timeout 15s
+		}
+		client_ip_headers Cf-Connecting-Ip
+	}
+	crowdsec {
+		api_url http://172.19.0.1:8080/
+		api_key {env.CROWDSEC_API_KEY}
+		appsec_url http://172.19.0.1:7422
+		ticker_interval 15s
+		disable_streaming
+	}
+}

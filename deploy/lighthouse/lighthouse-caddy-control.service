@@ -1,0 +1,13 @@
+[Unit]
+Description=Restrict the Lighthouse Caddy controller network
+Requires=docker.service
+After=docker.service
+PartOf=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/lighthouse-caddy-control
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
