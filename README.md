@@ -10,7 +10,7 @@ ghcr.io/yusoofsh/caddy:latest
 
 The GitHub Actions workflow builds on `ubuntu-latest` and publishes to GitHub Container Registry on every push to `main`.
 
-Use `workflow_dispatch` on a reviewed branch to publish a commit-specific candidate without moving `latest`. Deploy the candidate by registry digest after validation; `latest` is only published from `main`.
+Use `workflow_dispatch` on a reviewed branch to publish a commit-specific candidate without moving `latest`. The Lighthouse Compose file defaults to the `main` image at `:latest`; set `CADDY_IMAGE` or `SOCKET_PROXY_IMAGE` explicitly when a digest-pinned rollback is required.
 
 Published images include BuildKit provenance and SBOM attestations.
 

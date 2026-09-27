@@ -1,6 +1,6 @@
 services:
   socket:
-    image: ${SOCKET_PROXY_IMAGE:?set a tested registry digest}
+    image: ${SOCKET_PROXY_IMAGE:-ghcr.io/yusoofsh/docker-socket-proxy:latest}
     restart: unless-stopped
     networks:
       - socket
@@ -27,7 +27,7 @@ services:
       start_period: 5s
 
   controller:
-    image: ${CADDY_IMAGE:?set a tested registry digest}
+    image: ${CADDY_IMAGE:-ghcr.io/yusoofsh/caddy:latest}
     restart: unless-stopped
     user: "65532:65532"
     read_only: true
@@ -65,7 +65,7 @@ services:
         max-file: "3"
 
   ingress:
-    image: ${CADDY_IMAGE:?set a tested registry digest}
+    image: ${CADDY_IMAGE:-ghcr.io/yusoofsh/caddy:latest}
     restart: unless-stopped
     read_only: true
     cap_drop: [ALL]
