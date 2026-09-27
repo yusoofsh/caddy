@@ -4,7 +4,10 @@ FROM caddy:2.11.4-builder-alpine@sha256:0aa610043dab5da82ad0a0268e46bb852785e6f5
 COPY --from=toolchain /usr/local/go /opt/go
 ENV PATH="/opt/go/bin:${PATH}" GOROOT=/opt/go GOTOOLCHAIN=local
 
-RUN go version && GOMAXPROCS=2 GOMEMLIMIT=1600MiB xcaddy build v2.11.4 \
+# Build Caddy from the upstream development branch. The surrounding image
+# stages provide the reproducible Go/Alpine toolchain and runtime hardening;
+# the application source follows upstream `master` rather than a release tag.
+RUN go version && GOMAXPROCS=2 GOMEMLIMIT=1600MiB xcaddy build master \
   --with github.com/caddy-dns/cloudflare@v0.2.4 \
   --with github.com/WeidiDeng/caddy-cloudflare-ip@v0.0.0-20231130002422-f53b62aa13cb \
   --with github.com/lucaslorentz/caddy-docker-proxy/v2@v2.13.1 \

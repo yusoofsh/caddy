@@ -22,7 +22,7 @@ Published images include BuildKit provenance and SBOM attestations.
 - `github.com/hslatman/caddy-crowdsec-bouncer/http`
 - `github.com/hslatman/caddy-crowdsec-bouncer/appsec`
 
-Base image digests, Caddy, Go, and plugin versions are pinned in `Dockerfile`. The Go toolchain is explicitly copied from the pinned Go image rather than inherited from an older Caddy builder. The `x/net` replacement carries the DNS parser security fix. Review and rebuild these pins regularly; pinning is not a substitute for updates.
+Base image digests, Go, and plugin versions are pinned in `Dockerfile`; Caddy itself follows upstream `master` at build time rather than a release tag. The Go toolchain is explicitly copied from the pinned Go image rather than inherited from an older Caddy builder. The `x/net` replacement carries the DNS parser security fix. Review and rebuild these pins regularly; pinning is not a substitute for updates.
 
 ## Discovery isolation
 
