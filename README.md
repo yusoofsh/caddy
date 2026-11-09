@@ -10,7 +10,7 @@ ghcr.io/yusoofsh/caddy:latest
 
 The GitHub Actions workflow builds on `ubuntu-latest` and publishes to GitHub Container Registry on every push to `main`.
 
-Use `workflow_dispatch` on a reviewed branch to publish a commit-specific candidate without moving `latest`. The Lighthouse Compose file defaults to the version tags running on the host, `2026.11.09-ys.1` for Caddy and `2026.11.09-ys.2` for the socket proxy. Set `CADDY_IMAGE` or `SOCKET_PROXY_IMAGE` to another version tag for a rollback.
+Use `workflow_dispatch` on a reviewed branch to publish a commit-specific candidate without moving `latest`. The Lighthouse Compose file defaults to the version tags running on the host, `2026.11.09-ys.2` for Caddy and `2026.11.09-ys.2` for the socket proxy. Set `CADDY_IMAGE` or `SOCKET_PROXY_IMAGE` to another version tag for a rollback.
 
 Published images include BuildKit provenance and SBOM attestations.
 
