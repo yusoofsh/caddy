@@ -50,3 +50,7 @@ docker compose logs --tail=100 ingress
 ```
 
 Replace `<commit>` with the commit SHA suffix used by the `sha-<commit>` image tag.
+
+## Version tags
+
+Each published build also has a `sha-<commit>` tag. To give a build a version, push a git tag named `vYYYY.MM.DD-ys.N` on a commit of `main` whose image has finished publishing. The `Tag released image` workflow then adds `ghcr.io/yusoofsh/caddy:YYYY.MM.DD-ys.N` to that exact image. It never moves a version tag that already exists, and a tag push does not rebuild or redeploy anything. Pin deployments to the version tag.
